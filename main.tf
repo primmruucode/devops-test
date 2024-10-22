@@ -56,10 +56,15 @@ resource "aws_iam_instance_profile" "airflow_iam_role_instance_profile" {
   role = aws_iam_role.airflow_iam_role
 }
 
-resource "aws_key_pair" "staging" {
-  key_name   = "staging"
-  public_key = file("/key/key.pub")
+resource "tls_private_key" "staging" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
 }
+
+resource "aws_key_pair" "staging" {
+  public_key = tls_private_key.staging.public_key_openssh
+}
+
 
 ############### EC2 INSTANCE ###############
 data "aws_ami" "debian" {
