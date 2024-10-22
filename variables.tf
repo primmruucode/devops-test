@@ -23,7 +23,7 @@ variable "instance_type" {
     default = "t3.micro"
 }
 
-variable "launch_script" {
+variable "launch_script_path" {
     description = "bash script to execute when the instance is first created via the user_data argument"
     type = string
     default = "launch_script.sh"

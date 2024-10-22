@@ -68,7 +68,7 @@ data "aws_ami" "debian" {
     #filter looking for debian 12 on amd64
     filter {
         name = "name"
-        values = "debian-12-amd64-*"
+        values = ["debian-12-amd64-*"]
     }
 }
 #Bash script that will execute after image is spun up 
@@ -110,5 +110,5 @@ output "airflow_private_ip" {
 
 output "instance_id" {
   description = "IDs of the EC2 instance"
-  value       = aws_instance.app.id
+  value       = aws_instance.airflow.id
 }
