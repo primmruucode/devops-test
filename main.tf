@@ -77,11 +77,6 @@ data "aws_ami" "debian" {
         values = ["debian-12-amd64-*"]
     }
 }
-#Bash script that will execute after image is spun up 
-data "template_file" "launch_script" {
-    template = "${file(var.launch_script_path)}"
-    vars = {for key, item in var.launch_script_variables : key => item}  
-}
 
 #awd instance running debian 12
 
@@ -94,7 +89,6 @@ resource "aws_instance" "airflow" {
   private_ip             = "10.0.1.10" 
   security_groups = [aws_security_group.airflow_security_group.name]
   iam_instance_profile = aws_iam_instance_profile.airflow_iam_role_instance_profile.id
-  user_data = data.template_file.launch_script.rendered
 
   tags = {
     Name = "staging-airflow"
