@@ -51,11 +51,11 @@ resource "aws_iam_role" "airflow_iam_role" {
   managed_policy_arns = var.airflow_access_permissions
 }
 
-#used to pass an iam role to an ec2 instance 
 resource "aws_iam_instance_profile" "airflow_iam_role_instance_profile" {
   name = "airflow_iam_role_instance_profile"
-  role = aws_iam_role.airflow_iam_role
+  role = aws_iam_role.airflow_iam_role.name  # Fixed line
 }
+
 
 resource "tls_private_key" "staging" {
   algorithm = "RSA"
