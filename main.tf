@@ -5,6 +5,7 @@ provider "aws" {
 resource "aws_security_group" "airflow_security_group" {
   name        = "airflow_security_group"
   description = "Security group to allow inbound SCP & outbound 8080 (Airflow) connections"
+  vpc_id = "vpc-0ed8c187dcc8d95e1"
 
   ingress {
     description = "Inbound SCP"
@@ -87,13 +88,13 @@ data "template_file" "launch_script" {
 resource "aws_instance" "airflow" {
   ami                    = data.aws_ami.debian.id
   instance_type          = var.instance_type 
-  subnet_id              = "subnet-1a2b3c4d"
+  subnet_id              = "subnet-093d5aae70ac2a0a5"
   key_name               = aws_key_pair.staging.key_name
-  vpc_security_group_ids = "vpc-a1b2c3d4"
+  vpc_security_group_ids = [aws_security_group.airflow_security_group.id]
   private_ip             = "10.0.1.10" 
-  security_groups = [airflow_security_group]
-  iam_instance_profile = iam_instance_profile.airflow_iam_role_instance_profile.id
-  user_data = data.template_file.launch_script
+  security_groups = [aws_security_group.airflow_security_group.name]
+  iam_instance_profile = aws_iam_instance_profile.airflow_iam_role_instance_profile.id
+  user_data = data.template_file.launch_script.rendered
 
   tags = {
     Name = "staging-airflow"
@@ -101,7 +102,7 @@ resource "aws_instance" "airflow" {
 }
 #route53 record
 resource "aws_route53_record" "airflow_dns" {
-  zone_id = "ABC123" 
+  zone_id = "vpc-0ed8c187dcc8d95e1" 
   name    = "staging-airflow.kaidee.internal"
   type    = "A"
   ttl     = 300
